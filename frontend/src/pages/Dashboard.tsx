@@ -4,28 +4,35 @@ import React, {useEffect, useState} from "react";
 import * as api from "../api/index";
 import {Redirect} from "react-router-dom";
 
+type parentType = {
+    id: string,
+    name: string,
+    email: string,
+    studentName: string
+}
+
 export const Dashboard = () => {
     const [isLogin, setIsLogin] = useState(true);
 
-    const [parent, setParent] = useState({
-        id : "",
-        name : "",
-        email : "",
-        studentName : ""
+    const [parent, setParent] = useState<parentType>({
+        id: "",
+        name: "",
+        email: "",
+        studentName: ""
     });
     useEffect(() => {
         (async () => {
             try {
                 let data = await api.parent();
                 await setParent(data.data);
-            }catch (e) {
+            } catch (e) {
                 await setIsLogin(false);
             }
         })();
     }, []);
 
-    if(!isLogin) {
-        return <Redirect to={"login"} />
+    if (!isLogin) {
+        return <Redirect to={"login"}/>
     }
     return (
         <Layout>

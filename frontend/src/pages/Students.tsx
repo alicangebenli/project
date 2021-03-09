@@ -4,6 +4,12 @@ import React, {useEffect, useState} from "react";
 import * as api from "../api";
 import {Redirect} from "react-router-dom";
 
+type studentType = {
+    id: string,
+    name: string,
+    guardianName: string,
+    guardianEmail: string
+}
 export const Students = () => {
     const [error, setError] = useState({
         style: {},
@@ -11,21 +17,21 @@ export const Students = () => {
     });
     const [isLogin, setIsLogin] = useState(true);
 
-    const [students, setStudents] = useState([]);
+    const [students, setStudents] = useState<studentType[]>([]);
     useEffect(() => {
         (async () => {
             try {
                 let data = await api.students();
                 await setStudents(data.data);
                 await setIsLogin(true);
-            }catch (e) {
+            } catch (e) {
                 await setIsLogin(false);
             }
         })()
     }, [])
 
-    if(!isLogin) {
-        return <Redirect to={"login"} />
+    if (!isLogin) {
+        return <Redirect to={"login"}/>
     }
 
     return (
@@ -41,7 +47,7 @@ export const Students = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {students.map((item: any) => {
+                    {students.map((item: studentType) => {
                         return (
                             <tr key={item.id}>
                                 <td>{item.id}</td>

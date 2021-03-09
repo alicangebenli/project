@@ -4,7 +4,6 @@ axios.defaults.baseURL = 'http://localhost:8000/api';
 axios.defaults.headers = {
     "Authorization": "Bearer " + localStorage.getItem('token')
 }
-
 export const user = async () => await (await axios.get('user')).data;
 export const login = async (data: any) => await axios.post('login', data);
 export const register = async (data: any) => await axios.post('register', data);

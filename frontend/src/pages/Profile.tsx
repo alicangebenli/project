@@ -4,27 +4,37 @@ import React, {useEffect, useState} from "react";
 import * as api from "../api/index";
 import {Redirect} from "react-router-dom";
 
+type userType = {
+    name: string,
+    email: string,
+    type: string,
+    password: string
+}
+
 export const Profile = () => {
     const [isLogin, setIsLogin] = useState(true);
-    const [user, setUser] = useState({
-        name : "",
-        email : "",
-        type : "",
-        password : ""
+    const [user, setUser] = useState<userType>({
+        name: "",
+        email: "",
+        type: "",
+        password: ""
     });
+    const [error, setError] = useState({});
+
     useEffect(() => {
         (async () => {
             try {
                 let data = await api.user();
                 await setUser({
                     ...data.data,
-                    password : ""
+                    password: ""
                 });
-            }catch (e) {
+            } catch (e) {
                 await setIsLogin(false);
             }
         })()
     }, []);
+
     const handleUpdate = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         const target = await e.target as typeof e.target & {
@@ -36,19 +46,24 @@ export const Profile = () => {
         const {email, password, name} = await target;
 
         try {
-            console.log(email.value);
             await api.updateUser({
                 email: email.value,
                 password: password.value,
                 name: name.value,
             });
         } catch (e) {
-            console.log(e);
+            let errorObj = e?.response?.data?.errors;
+            if (errorObj) {
+                let keys = Object.keys(errorObj);
+                for (let i = 0; i < keys.length; i++) {
+                    setError({style: {display: "block"}, data: errorObj[keys[i]]});
+                }
+            }
         }
     }
 
-    if(!isLogin) {
-        return <Redirect to={"login"} />
+    if (!isLogin) {
+        return <Redirect to={"login"}/>
     }
     return (
         <Layout>
